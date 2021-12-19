@@ -9,6 +9,14 @@ export async function getNominationCount(userId: string, season_num: number): Pr
     });
 }
 
+export async function hasWatchedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
+    return await Nomination.count({
+        user: userId,
+        season_num: season_num,
+        category: category
+    }) > 0;
+}
+
 export async function hasNominatedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
     return await Nomination.exists({
         user: userId,
@@ -34,4 +42,12 @@ export async function nominate(userId: string, movieId: string, season_num: numb
     });
 
     return await nomination.save();
+}
+
+export async function unnominate(userId: string, season_num: number, category: string): Promise<NominationDocument> {
+    return await Nomination.findOneAndRemove({
+        user: userId,
+        season_num: season_num,
+        category: category
+    });
 }

@@ -27,7 +27,6 @@ async function HandleNominate({ interaction, args }) {
     // Create user if not exists
     const user = await UserController.getOrCreateUser(interaction.member.user.id);
 
-
     // Get the movie
     // Create movie if not exists
     const movie = await MovieController.getOrCreateMovie(imdbId);
@@ -79,7 +78,7 @@ export default new Command({
     options: [
         {
             name: "imdbid",
-            description: "The imdbID of the movie you with to nominate (i.e.: tt0123456)",
+            description: "The IMDB ID or IMDB URL of the movie (i.e.: tt0123456 or https://www.imdb.com/title/tt0413267)",
             required: true,
             type: "STRING",
         },
