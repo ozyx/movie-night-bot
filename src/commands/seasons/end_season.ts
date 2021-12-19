@@ -2,13 +2,12 @@ import { Command } from "../../structures/Command";
 import { SeasonController } from "../../controller/SeasonController"
 
 async function HandleEndSeason({ interaction }) {
-    let season;
     try {
-        season = await SeasonController.endSeason();
+        const season = await SeasonController.endSeason();
+        interaction.followUp(`Season ${season.season_num} has ended!`);
     } catch (err) {
         return interaction.followUp(err.message);
     }
-    interaction.followUp(`Season ${season.season_num} has ended!`);
 }
 
 export default new Command({

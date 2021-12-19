@@ -4,4 +4,5 @@ export interface INomination {
     movie: string;
     season_num: number;
     date_watched?: Date;
+    watched: boolean;
 }

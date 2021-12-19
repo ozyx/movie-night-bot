@@ -8,6 +8,7 @@ interface NominationInput {
   movie: INomination["movie"];
   season_num: INomination["season_num"];
   date_watched?: INomination["date_watched"];
+  watched: INomination["watched"];
 }
 
 type NominationDocument = NominationInput & mongoose.Document;
@@ -27,6 +28,7 @@ const NominationType: Record<keyof INomination, any> =
   season_num: { type: Number, required: true },
   category: { type: String, required: true },
   date_watched: { type: Date, default: undefined },
+  watched: { type: Boolean, default: false }
 };
 
 const nominationSchema = new Schema(NominationType, { timestamps: true });
