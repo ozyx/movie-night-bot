@@ -1,30 +1,31 @@
 import mongoose from "mongoose";
+import { IMovie } from "../typings/Movie";
 const { Schema } = mongoose;
 
 interface MovieInput {
-  title: string;
-  year: string,
-  rated: string,
-  released: string,
-  runtime: string,
-  genre: string,
-  director: string,
-  writer: string,
-  actors: string,
-  plot: string,
-  language: string,
-  country: string,
-  awards: string,
-  poster: string,
-  ratings: any[],
-  metascore: string,
-  imdbRating: string,
-  imdbVotes: string,
-  dvd: string,
-  boxOffice: string,
-  production: string,
-  website: string,
-  imdbID: string;
+  title: IMovie["title"],
+  year: IMovie["year"],
+  rated: IMovie["rated"],
+  released: IMovie["released"],
+  runtime: IMovie["runtime"],
+  genre: IMovie["genre"],
+  director: IMovie["director"],
+  writer: IMovie["writer"],
+  actors: IMovie["actors"],
+  plot: IMovie["plot"],
+  language: IMovie["language"],
+  country: IMovie["country"],
+  awards: IMovie["awards"],
+  poster: IMovie["poster"],
+  ratings: IMovie["ratings"],
+  metascore: IMovie["metascore"],
+  imdbRating: IMovie["imdbRating"],
+  imdbVotes: IMovie["imdbVotes"],
+  dvd: IMovie["dvd"],
+  boxOffice: IMovie["boxOffice"],
+  production: IMovie["production"],
+  website: IMovie["website"],
+  imdbID: IMovie["imdbID"];
 }
 
 const RatingSchema = new Schema(

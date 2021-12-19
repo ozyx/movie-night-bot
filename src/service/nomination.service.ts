@@ -1,5 +1,6 @@
 import { NominationDocument } from '../model/nomination.model';
 import { MongoClient } from '../structures/MongoClient';
+import { ExpandedNomination } from '../typings/Nomination';
 const Nomination = MongoClient.getConnection().models.Nomination;
 
 export async function getNominationCount(userId: string, season_num: number): Promise<number> {
@@ -9,12 +10,12 @@ export async function getNominationCount(userId: string, season_num: number): Pr
     });
 }
 
-export async function hasNotWatchedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
+export async function hasWatchedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
     return await Nomination.count({
         user: userId,
         season_num: season_num,
         category: category,
-        date_watched: undefined
+        watched: true
     }) > 0;
 }
 
@@ -32,6 +33,54 @@ export async function hasNominatedMovie(userId: string, season_num: number, movi
         season_num: season_num,
         movie: movieId
     });
+}
+
+export async function getNominations(seasonNum: number, userId?: string): Promise<ExpandedNomination[]> {
+    let agg: any[] = [
+        {
+            '$lookup': {
+                'from': 'movies',
+                'localField': 'movie',
+                'foreignField': '_id',
+                'as': 'movie'
+            }
+        }, {
+            '$unwind': {
+                'path': '$movie',
+                'preserveNullAndEmptyArrays': true
+            }
+        }, {
+            '$lookup': {
+                'from': 'users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'user'
+            }
+        }, {
+            '$unwind': {
+                'path': '$user',
+                'preserveNullAndEmptyArrays': true
+            }
+        }, {
+            '$unset': [
+                'user.hash', 'user.salt', 'user.email'
+            ]
+        }
+    ]
+
+    let match = {
+        '$match': {
+            'season_num': seasonNum,
+        }
+    }
+
+    if (userId) {
+        match['$match']['user._id'] = userId;
+    }
+
+    agg.push(match);
+
+    return await Nomination.aggregate(agg);
 }
 
 export async function nominate(userId: string, movieId: string, season_num: number, category: string): Promise<NominationDocument> {
