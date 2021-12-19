@@ -14,7 +14,6 @@ export class UserController {
         }
 
         let userDoc: UserDocument;
-        console.log(user);
 
         const found = await userExists(user);
         if (found) {

@@ -6,6 +6,7 @@ interface NominationInput {
   category: INomination["category"];
   user: INomination["user"];
   movie: INomination["movie"];
+  season_num: INomination["season_num"];
   date_watched?: INomination["date_watched"];
 }
 
@@ -23,6 +24,7 @@ const NominationType: Record<keyof INomination, any> =
     ref: "User",
     required: true,
   },
+  season_num: { type: Number, required: true },
   category: { type: String, required: true },
   date_watched: { type: Date, default: undefined },
 };

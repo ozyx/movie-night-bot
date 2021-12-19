@@ -1,6 +1,7 @@
 import { Command } from "../../structures/Command";
 import { UserController } from "../../controller/UserController";
 import { MovieController } from "../../controller/MovieController";
+import { NominationController } from "../../controller/NominationController";
 
 function isValidImdbId(imdbId) {
     return /^tt(\d{7}|\d{8})$/.test(imdbId);
@@ -9,6 +10,7 @@ function isValidImdbId(imdbId) {
 
 async function HandleNominate({ interaction, args }) {
     const imdbId = args.getString("imdbid");
+    const category = args.getString("category");
 
     // First, validate the IMDB ID
     if (!isValidImdbId(imdbId)) {
@@ -18,17 +20,24 @@ async function HandleNominate({ interaction, args }) {
     // Create user if not exists
     const user = await UserController.getOrCreateUser(interaction.member.user.id);
 
-    // TODO: Next, check if the User has already nominated movies for both categories
-
-    // TODO: Then, see if the User has already nominated a movie for this category
+    try {
+        await NominationController.canNominate(user._id, category);
+    } catch (err) {
+        return interaction.followUp(err.message);
+    }
 
     // Get the movie
     // Create movie if not exists
     const movie = await MovieController.getOrCreateMovie(imdbId);
 
     // Create nomination
-    
-    interaction.followUp(`You nominated "${movie.title}" (${movie.year}) as your ${args.getString("category")} pick!`);
+    const nomination = await NominationController.nominate(user._id, movie._id, category);
+
+    if (!nomination) {
+        return interaction.followUp("Something went wrong.");
+    }
+
+    interaction.followUp(`You nominated "${movie.title}" (${movie.year}) as your ${category} pick for ${nomination.season_num}!`);
 };
 
 export default new Command({
