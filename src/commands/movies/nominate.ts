@@ -3,6 +3,7 @@ import { UserController } from "../../controller/UserController";
 import { MovieController } from "../../controller/MovieController";
 import { NominationController } from "../../controller/NominationController";
 import { MessageEmbed } from "discord.js";
+import { SeasonController } from "../../controller/SeasonController";
 
 function isValidImdbId(imdbId) {
     return /^.*(tt\d{7}|\d{8}).*$/.test(imdbId);
@@ -37,8 +38,10 @@ async function HandleNominate({ interaction, args }) {
         return interaction.followUp(err.message);
     }
 
+    const season_num = await SeasonController.getNextSeasonNum();
+
     // Create nomination
-    const nomination = await NominationController.nominate(user._id, movie._id, category);
+    const nomination = await NominationController.nominate(user._id, movie._id, season_num, category);
 
     if (!nomination) {
         return interaction.followUp("Something went wrong.");

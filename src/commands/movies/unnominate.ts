@@ -1,4 +1,5 @@
 import { NominationController } from "../../controller/NominationController";
+import { SeasonController } from "../../controller/SeasonController";
 import { UserController } from "../../controller/UserController";
 import { Command } from "../../structures/Command";
 
@@ -11,10 +12,12 @@ async function HandleUnnominate({ interaction, args }) {
     } catch (err) {
         return interaction.followUp(err.message);
     }
-    
-    const nomination = await NominationController.unnominate(user._id, category);
-    
-    if (!nomination) {
+
+    const season_num = await SeasonController.getNextSeasonNum();
+
+    const unnomination = await NominationController.unnominate(user._id, season_num, category);
+
+    if (!unnomination) {
         return interaction.followUp("Something went wrong.");
     }
 

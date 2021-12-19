@@ -1,14 +1,14 @@
 import { getNominationCount, hasNominatedCategory, hasNominatedMovie, hasWatchedCategory } from "../service/nomination.service"
-import { getLatestSeason } from "../service/season.service";
+import { getCurrentSeason } from "../service/season.service";
 import { nominate, unnominate } from "../service/nomination.service";
 import { NominationDocument } from "../model/nomination.model";
 
 export class NominationController {
     public static async canNominate(user_id: string, category: string, movie_id: string): Promise<boolean> {
-        const latestSeason = await getLatestSeason();
-        const season_num = latestSeason.season_num;
+        const currentSeason = await getCurrentSeason();
+        const season_num = currentSeason.season_num + 1;
 
-        if (latestSeason.end_date) {
+        if (!currentSeason.end_date) {
             throw new Error("Can't nominate-- the new season hasn't started yet!");
         }
 
@@ -28,10 +28,10 @@ export class NominationController {
     }
 
     public static async canUnnominate(user_id: string, category: string): Promise<boolean> {
-        const latestSeason = await getLatestSeason();
-        const season_num = latestSeason.season_num;
+        const currentSeason = await getCurrentSeason();
+        const season_num = currentSeason.season_num + 1;
 
-        if (latestSeason.end_date) {
+        if (!currentSeason.end_date) {
             throw new Error("Can't unnominate-- the new season hasn't started yet!");
         }
 
@@ -46,17 +46,11 @@ export class NominationController {
         return true
     }
 
-    public static async nominate(user_id: string, movie_id: string, category: string): Promise<NominationDocument> {
-        const latestSeason = await getLatestSeason();
-        const season_num = latestSeason.season_num;
-
+    public static async nominate(user_id: string, movie_id: string, season_num: number, category: string): Promise<NominationDocument> {
         return await nominate(user_id, movie_id, season_num, category);
     }
 
-    public static async unnominate(user_id: string, category: string): Promise<NominationDocument> {
-        const latestSeason = await getLatestSeason();
-        const season_num = latestSeason.season_num;
-
+    public static async unnominate(user_id: string, season_num: number, category: string): Promise<NominationDocument> {
         return await unnominate(user_id, season_num, category);
     }
 }
