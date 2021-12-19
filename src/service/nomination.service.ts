@@ -17,6 +17,14 @@ export async function hasNominatedCategory(userId: string, season_num: number, c
     });
 }
 
+export async function hasNominatedMovie(userId: string, season_num: number, movieId: string): Promise<boolean> {
+    return await Nomination.exists({
+        user: userId,
+        season_num: season_num,
+        movie: movieId
+    });
+}
+
 export async function nominate(userId: string, movieId: string, season_num: number, category: string): Promise<NominationDocument> {
     const nomination = new Nomination({
         user: userId,
