@@ -7,7 +7,9 @@ function GenerateEmbed(nominations: ExpandedNomination[], start: number, pageMax
     const current = nominations.slice(start, start + pageMax);
     return new MessageEmbed({
         title: `Showing Nominations ${start + 1}-${start + current.length} of ${nominations.length}`,
-        description: current.map(n => `<@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`).join("\n")
+        description: current.map((n, idx) =>
+            `${idx + 1 + start}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
+            .join("\n")
     });
 }
 
@@ -38,8 +40,8 @@ async function HandleCurrentNominations({ interaction }) {
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle("Current Nominations")
-            .setDescription(nominations.map(n =>
-                `<@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
+            .setDescription(nominations.map((n, idx) =>
+                `${idx + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
                 .join("\n"));
         interaction.followUp({ embeds: [embed], ephemeral: true });
     } else {
