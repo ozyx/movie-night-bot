@@ -6,8 +6,11 @@ import { nominationSchema, NominationDocument } from "../model/nomination.model"
 import { seasonSchema, SeasonDocument } from "../model/season.model";
 
 const mongoUrl = process.env.MONGO_URL;
+const env = process.env.ENVIRONMENT;
+const mongoOpts = process.env.MONGO_OPTIONS;
+const connectionUri = `${mongoUrl}/${env}?${mongoOpts}`;
 
-const connection: mongoose.Connection = mongoose.createConnection(mongoUrl, {});
+const connection: mongoose.Connection = mongoose.createConnection(connectionUri, {});
 connection.on("error", (err) => {
     console.error(err);
 });
