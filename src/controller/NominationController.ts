@@ -63,11 +63,11 @@ export class NominationController {
         return await unnominate(user_id, season_num, category);
     }
 
-    public static async getCurrentNominations(): Promise<ExpandedNomination[]> {
+    public static async getCurrentNominations(userId?: string): Promise<ExpandedNomination[]> {
         const currentSeason = await getCurrentSeason();
         const end_date = currentSeason.end_date;
         const season_num = end_date ? currentSeason.season_num + 1 : currentSeason.season_num;
 
-        return await getNominations(season_num);
+        return await getNominations(season_num, userId);
     }
 }

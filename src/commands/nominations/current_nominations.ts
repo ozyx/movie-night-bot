@@ -25,13 +25,18 @@ function compareUserId(a: ExpandedNomination, b: ExpandedNomination) {
     return 0;
 }
 
-async function HandleCurrentNominations({ interaction }) {
+async function HandleCurrentNominations({ interaction, args }) {
+    const onlyMine = args.getBoolean("only_mine");
+    const userId = onlyMine ? interaction.member.user.id : null;
     const MAX_PER_PAGE = 10;
-    let nominations = await NominationController.getCurrentNominations();
-    nominations = nominations.sort(compareCategory).sort(compareUserId);
-
+    let nominations = await NominationController.getCurrentNominations(userId);
+    
     if (!nominations || !nominations.length) {
         return interaction.followUp("No nominations found.");
+    }
+
+    if(nominations.length > 1) {
+        nominations = nominations.sort(compareCategory).sort(compareUserId);
     }
 
     const canFitOnOnePage = nominations.length <= MAX_PER_PAGE;
@@ -96,4 +101,12 @@ export default new Command({
     name: "current_nominations",
     description: "View current nominations!",
     run: HandleCurrentNominations,
+    options: [
+        {
+            name: "only_mine",
+            description: "Only show your current nominations.",
+            type: "BOOLEAN",
+            required: false,
+        }
+    ]
 })

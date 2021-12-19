@@ -75,7 +75,7 @@ export async function getNominations(seasonNum: number, userId?: string): Promis
     }
 
     if (userId) {
-        match['$match']['user._id'] = userId;
+        match['$match']['user.discord_id'] = userId;
     }
 
     agg.push(match);
