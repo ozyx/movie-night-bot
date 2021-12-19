@@ -80,12 +80,6 @@ export default new Command({
     run: HandleNominate,
     options: [
         {
-            name: "imdbid",
-            description: "The IMDB ID or IMDB URL of the movie (i.e.: tt0123456 or https://www.imdb.com/title/tt0413267)",
-            required: true,
-            type: "STRING",
-        },
-        {
             name: "category",
             description: "The category of the movie you wish to nominate (i.e.: CLASS or TRASH)",
             required: true,
@@ -98,6 +92,12 @@ export default new Command({
                 value: "TRASH"
             }
             ],
+            type: "STRING",
+        },
+        {
+            name: "imdbid",
+            description: "The IMDB ID or IMDB URL of the movie (i.e.: tt0123456 or https://www.imdb.com/title/tt0413267)",
+            required: true,
             type: "STRING",
         }
     ]
