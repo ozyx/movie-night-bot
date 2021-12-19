@@ -1,6 +1,6 @@
 import { UserDocument, UserInput } from '../model/user.model';
-import { connection } from "../db/Connection";
-const User = connection.models.User;
+import { MongoClient } from "../structures/MongoClient";
+const User = MongoClient.getConnection().models.User;
 
 export async function userExists(user: UserInput): Promise<boolean> {
     return await User.exists({ discord_id: user.discord_id });

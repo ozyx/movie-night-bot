@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
+import { IUser } from "../typings/User";
 
 interface UserInput {
-  discord_id: string;
-  discord_tag?: string;
-  hash?: string;
-  salt?: string;
-  email?: string;
+  discord_id: IUser["discord_id"];
+  discord_tag?: IUser["discord_tag"];
+  hash?: IUser["hash"];
+  salt?: IUser["salt"];
+  email?: IUser["email"];
 }
 
 type UserDocument = UserInput & mongoose.Document;
 
-const UserType = {
+const UserType: Record<keyof IUser, any> = {
   discord_id: {
     type: String,
     required: true,

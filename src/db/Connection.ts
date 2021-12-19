@@ -3,6 +3,7 @@ import "dotenv/config.js";
 import { movieSchema, MovieDocument } from "../model/movie.model";
 import { userSchema, UserDocument } from "../model/user.model";
 import { nominationSchema, NominationDocument } from "../model/nomination.model";
+import { seasonSchema, SeasonDocument } from "../model/season.model";
 
 const mongoUrl = process.env.MONGO_URL;
 
@@ -20,5 +21,6 @@ connection.on("disconnected", () => {
 connection.model<MovieDocument>("Movie", movieSchema, "movies");
 connection.model<UserDocument>("User", userSchema, "users");
 connection.model<NominationDocument>("Nomination", nominationSchema, "nominations");
+connection.model<SeasonDocument>("Season", seasonSchema, "seasons");
 
 export { connection };

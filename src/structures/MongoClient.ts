@@ -1,32 +1,18 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
+import { connection } from "../db/Connection";
 
 
 export class MongoClient {
-    private static _instance: MongoClient;
     private static _connection: mongoose.Connection;
-    private static _url: string;
 
     private constructor() {
-        const mongoUrl = process.env.MONGO_URL;
-        MongoClient._url = mongoUrl ? process.env.MONGO_URL : "mongodb://localhost:27017";
-
-        this.connect(MongoClient._url, { useNewUrlParser: true, useUnifiedTopology: true });
+        MongoClient._connection = connection;
     }
 
-    public static getInstance(): MongoClient {
-        if (!MongoClient._instance) {
-            MongoClient._instance = new MongoClient();
+    public static getConnection(): mongoose.Connection {
+        if (!MongoClient._connection) {
+            MongoClient._connection = connection;
         }
-        return MongoClient._instance;
-    }
-
-    private async connect(url: string, options: any): Promise<void> {
-        mongoose.connect(url, options);
-        MongoClient._connection = mongoose.connection;
-        MongoClient._connection.on("error", console.error.bind(console, "MongoDB connection error:"));
-        MongoClient._connection.once("open", () => {
-            console.log("MongoDB connected");
-        }
-        );
+        return MongoClient._connection;
     }
 }
