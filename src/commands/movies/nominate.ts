@@ -5,18 +5,24 @@ import { NominationController } from "../../controller/NominationController";
 import { MessageEmbed } from "discord.js";
 
 function isValidImdbId(imdbId) {
-    return /^tt(\d{7}|\d{8})$/.test(imdbId);
+    return /^.*(tt\d{7}|\d{8}).*$/.test(imdbId);
 }
 
+function extractImdbId(url) {
+    return /^.*(tt\d{7}|\d{8}).*$/.exec(url)[1];
+}
 
 async function HandleNominate({ interaction, args }) {
-    const imdbId = args.getString("imdbid");
+    let imdbId = args.getString("imdbid");
     const category = args.getString("category");
 
     // First, validate the IMDB ID
     if (!isValidImdbId(imdbId)) {
         return interaction.followUp("Invalid IMDB ID.");
     }
+
+    // Extract IMDB ID from URL (incase it's a URL)
+    imdbId = extractImdbId(imdbId);
 
     // Create user if not exists
     const user = await UserController.getOrCreateUser(interaction.member.user.id);
