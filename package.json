@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A bot to handle movie night related operations",
   "main": "src/bot.js",
+  "engines": {
+    "node": "17.x",
+    "npm": "7.x"
+  },
   "scripts": {
     "start": "node dist/bot.js",
     "start:dev": "ts-node-dev src/bot.ts",
