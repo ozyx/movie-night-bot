@@ -52,7 +52,8 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
             .setTitle(`Movie Night Season #${nextSeasonNum}`)
             .setDescription(nominations.map((n, idx) =>
                 `${idx + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
-                .join("\n"));
+                .join("\n"))
+            .setTimestamp(new Date());
         interaction.followUp({ embeds: [embed], ephemeral: true });
     } else {
         const backId = 'back'
