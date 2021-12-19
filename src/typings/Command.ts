@@ -5,7 +5,7 @@ export interface ExtendedInteraction extends CommandInteraction {
     member: GuildMember;
 }
 
-interface RunOptions {
+export interface RunOptions {
     client: ExtendedClient,
     interaction: ExtendedInteraction,
     args: CommandInteractionOptionResolver
