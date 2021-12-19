@@ -8,7 +8,7 @@ async function HandleUnnominate({ interaction, args }) {
     // Create user if not exists
     const user = await UserController.getOrCreateUser(interaction.member.user.id);
     try {
-        NominationController.canUnnominate(user._id, category);
+        await NominationController.canUnnominate(user._id, category);
     } catch (err) {
         return interaction.followUp(err.message);
     }
