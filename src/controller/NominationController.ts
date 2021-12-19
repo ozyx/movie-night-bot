@@ -1,4 +1,4 @@
-import { getNominationCount, hasNominatedCategory, hasNominatedMovie, hasWatchedCategory } from "../service/nomination.service"
+import { getNominationCount, hasNominatedCategory, hasNominatedMovie, hasNotWatchedCategory } from "../service/nomination.service"
 import { getCurrentSeason } from "../service/season.service";
 import { nominate, unnominate } from "../service/nomination.service";
 import { NominationDocument } from "../model/nomination.model";
@@ -39,7 +39,7 @@ export class NominationController {
             throw new Error(`Can't unnominate movie for ${category}-- you haven't nominated anything for this category!`);
         }
 
-        if (await hasWatchedCategory(user_id, season_num, category)) {
+        if (!await hasNotWatchedCategory(user_id, season_num, category)) {
             throw new Error(`Can't unnominate movie for ${category}-- you've already watched this movie!`);
         }
 

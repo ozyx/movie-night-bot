@@ -9,11 +9,12 @@ export async function getNominationCount(userId: string, season_num: number): Pr
     });
 }
 
-export async function hasWatchedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
+export async function hasNotWatchedCategory(userId: string, season_num: number, category: string): Promise<boolean> {
     return await Nomination.count({
         user: userId,
         season_num: season_num,
-        category: category
+        category: category,
+        date_watched: undefined
     }) > 0;
 }
 
