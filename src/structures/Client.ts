@@ -1,9 +1,10 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, ExcludeEnum } from "discord.js";
 import { CommandType } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
+import { ActivityTypes } from "discord.js/typings/enums";
 
 const globPromise = promisify(glob);
 
@@ -65,6 +66,19 @@ export class ExtendedClient extends Client {
                 filePath
             );
             this.on(event.event, event.run);
+        });
+
+        this.once("ready", () => {
+            if (process.env.ACTIVITY_TYPE) {
+                this.user.setPresence({
+                    activities: [
+                        {
+                            name: process.env.ACTIVITY_CONTENT,
+                            type: process.env.ACTIVITY_TYPE as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>
+                        }
+                    ]
+                });
+            }
         });
     }
 }

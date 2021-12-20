@@ -7,6 +7,8 @@ declare global {
             OMDB_API_KEY: string;
             MONGO_URL: string;
             MONGO_OPTIONS: string;
+            ACTIVITY_TYPE: "PLAYING" | "STREAMING" | "LISTENING" | "WATCHING";
+            ACTIVITY_CONTENT: string;
         }
     }
 }
