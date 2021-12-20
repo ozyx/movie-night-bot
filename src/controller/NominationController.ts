@@ -28,6 +28,12 @@ export class NominationController {
         return true
     }
 
+    /**
+     * Check if the user can currently unnomiate this movie.
+     * @param user_id The user ID of the user who is nominating.
+     * @param category The category being nominated for
+     * @returns 
+     */
     public static async canUnnominate(user_id: string, category: string): Promise<boolean> {
         const currentSeason = await getCurrentSeason();
         const season_num = currentSeason.season_num + 1;
@@ -59,15 +65,18 @@ export class NominationController {
         return await nominate(user_id, movie_id, season_num, category);
     }
 
+    /**
+     * Unnominate a movie for a category.
+     * @param user_id The user ID of the user who is unnominating.
+     * @param season_num The season number of the season to nominate for.
+     * @param category The category to unnominate the movie for.
+     * @returns The nomination document.
+     */
     public static async unnominate(user_id: string, season_num: number, category: string): Promise<NominationDocument> {
         return await unnominate(user_id, season_num, category);
     }
 
-    public static async getCurrentNominations(userId?: string): Promise<ExpandedNomination[]> {
-        const currentSeason = await getCurrentSeason();
-        const end_date = currentSeason.end_date;
-        const season_num = end_date ? currentSeason.season_num + 1 : currentSeason.season_num;
-
-        return await getNominations(season_num, userId);
+    public static async getNominations(seasonNum: number, userId?: string): Promise<ExpandedNomination[]> {
+        return await getNominations(seasonNum, userId);
     }
 }

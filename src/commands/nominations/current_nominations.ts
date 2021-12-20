@@ -32,8 +32,8 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
     const onlyMine = args.getBoolean("only_mine");
     const userId = onlyMine ? interaction.member.user.id : null;
     const MAX_PER_PAGE = 10;
-    const nextSeasonNum = await SeasonController.getNextSeasonNum();
-    let nominations = await NominationController.getCurrentNominations(userId);
+    const seasonNum = args.getNumber("season_num") || await SeasonController.getNextSeasonNum();
+    let nominations = await NominationController.getNominations(seasonNum, userId);
 
     if (!nominations || !nominations.length) {
         return interaction.followUp("No nominations found.");
@@ -49,7 +49,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setAuthor(`Current Nominations`)
-            .setTitle(`Movie Night Season #${nextSeasonNum}`)
+            .setTitle(`Movie Night Season #${seasonNum}`)
             .setDescription(nominations.map((n, idx) =>
                 `${idx + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
                 .join("\n"))
@@ -70,7 +70,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
             emoji: '➡️',
             customId: forwardId
         })
-        const embed = GenerateEmbed(nextSeasonNum, nominations, 0, MAX_PER_PAGE);
+        const embed = GenerateEmbed(seasonNum, nominations, 0, MAX_PER_PAGE);
         const message = await interaction.followUp({
             embeds: [embed],
             components: canFitOnOnePage
@@ -87,7 +87,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
             interaction.customId === backId ? (currentIndex -= MAX_PER_PAGE) : (currentIndex += MAX_PER_PAGE)
             // Respond to interaction by updating message with new embed
             await interaction.update({
-                embeds: [GenerateEmbed(nextSeasonNum, nominations, currentIndex, MAX_PER_PAGE)],
+                embeds: [GenerateEmbed(seasonNum, nominations, currentIndex, MAX_PER_PAGE)],
                 components: [
                     new MessageActionRow({
                         components: [
@@ -104,15 +104,21 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
 }
 
 export default new Command({
-    name: "current_nominations",
-    description: "View current nominations!",
+    name: "view_nominations",
+    description: "View current and previous seasons' nominations!",
     run: HandleCurrentNominations,
     options: [
+        {
+            name: "season_num",
+            description: "The season number to view. Defaults to the next season.",
+            type: "NUMBER",
+            required: false,
+        },
         {
             name: "only_mine",
             description: "Only show your current nominations.",
             type: "BOOLEAN",
             required: false,
-        }
+        },
     ]
 })
