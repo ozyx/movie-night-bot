@@ -4,6 +4,7 @@ import { MovieController } from "../../controller/MovieController";
 import { NominationController } from "../../controller/NominationController";
 import { MessageEmbed } from "discord.js";
 import { SeasonController } from "../../controller/SeasonController";
+import { RunOptions } from "../../typings/Command";
 
 function isValidImdbId(imdbId) {
     return /^.*(tt\d{7}|\d{8}).*$/.test(imdbId);
@@ -13,7 +14,7 @@ function extractImdbId(url) {
     return /^.*(tt\d{7}|\d{8}).*$/.exec(url)[1];
 }
 
-async function HandleNominate({ interaction, args }) {
+async function HandleNominate({ interaction, args }: RunOptions) {
     let imdbId = args.getString("imdbid");
     const category = args.getString("category");
 
@@ -66,11 +67,10 @@ async function HandleNominate({ interaction, args }) {
                     { name: "Writer", value: movie.writer },
                 ])
                 .setImage(movie.poster)
-                .setThumbnail(movie.poster)
+                .setThumbnail(interaction.member.user.avatarURL())
                 .setDescription(movie.plot)
                 .setTimestamp()
-        ],
-        ephemeral: true
+        ]
     });
 };
 
@@ -78,6 +78,7 @@ export default new Command({
     name: "nominate",
     description: "Nominate a movie!",
     run: HandleNominate,
+    ephemeral: false,
     options: [
         {
             name: "category",

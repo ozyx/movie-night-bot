@@ -14,5 +14,6 @@ export default new Command({
     name: "start_season",
     description: "Start a new season",
     userPermissions: ["ADMINISTRATOR"],
+    ephemeral: false,
     run: HandleStartSeason
 });

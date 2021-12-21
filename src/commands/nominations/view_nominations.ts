@@ -33,6 +33,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
     const userId = onlyMine ? interaction.member.user.id : null;
     const MAX_PER_PAGE = 10;
     const seasonNum = args.getNumber("season_num") || await SeasonController.getNextSeasonNum();
+
     let nominations = await NominationController.getNominations(seasonNum, userId);
 
     if (!nominations || !nominations.length) {
@@ -54,7 +55,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
                 `${idx + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
                 .join("\n"))
             .setTimestamp(new Date());
-        interaction.followUp({ embeds: [embed], ephemeral: true });
+        interaction.followUp({ embeds: [embed], ephemeral: false });
     } else {
         const backId = 'back'
         const forwardId = 'forward'
@@ -107,6 +108,7 @@ export default new Command({
     name: "view_nominations",
     description: "View current and previous seasons' nominations!",
     run: HandleCurrentNominations,
+    ephemeral: true,
     options: [
         {
             name: "season_num",

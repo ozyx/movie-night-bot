@@ -14,5 +14,6 @@ export default new Command({
     name: "end_season",
     description: "End the current season",
     userPermissions: ["ADMINISTRATOR"],
+    ephemeral: false,
     run: HandleEndSeason
 });
