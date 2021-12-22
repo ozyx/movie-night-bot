@@ -69,7 +69,7 @@ export class ExtendedClient extends Client {
         });
 
         this.once("ready", () => {
-            if (process.env.ACTIVITY_TYPE) {
+            if (process.env.ACTIVITY_TYPE && process.env.ACTIVITY_CONTENT) {
                 this.user.setPresence({
                     activities: [
                         {

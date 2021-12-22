@@ -7,13 +7,14 @@ import { RunOptions } from "../../typings/Command";
 
 function GenerateEmbed(seasonNum: number, nominations: ExpandedNomination[], start: number, pageMax = 10): MessageEmbed {
     const current = nominations.slice(start, start + pageMax);
-    return new MessageEmbed({
-        title: `Movie Night Season #${seasonNum}`,
-        timestamp: new Date(),
-        description: current.map((n, idx) =>
-            `${idx + 1 + start}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
-            .join("\n")
-    }).setAuthor(`Showing Nominations ${start + 1}-${start + current.length} of ${nominations.length}`);
+    return new MessageEmbed()
+        .setColor('#7851a9')
+        .setAuthor(`Showing Nominations ${start + 1}-${start + current.length} of ${nominations.length}`)
+        .setTitle(`Movie Night Season #${seasonNum}`)
+        .setDescription(current.map((n, idx) =>
+            `${idx + start + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
+            .join("\n"))
+        .setTimestamp()
 }
 
 function compareCategory(a: ExpandedNomination, b: ExpandedNomination) {
@@ -26,6 +27,50 @@ function compareUserId(a: ExpandedNomination, b: ExpandedNomination) {
     if (a.user.discord_id > b.user.discord_id) return 1;
     if (a.user.discord_id < b.user.discord_id) return -1;
     return 0;
+}
+
+function getBackButton(disabled: boolean): MessageButton {
+    return new MessageButton({
+        style: 'PRIMARY',
+        label: '◀',
+        customId: 'back',
+        disabled
+    });
+}
+
+function getFarBackButton(disabled: boolean): MessageButton {
+    return new MessageButton({
+        style: 'PRIMARY',
+        label: '◀◀',
+        customId: 'farback',
+        disabled
+    });
+}
+
+function getForwardButton(disabled: boolean): MessageButton {
+    return new MessageButton({
+        style: 'PRIMARY',
+        label: '▶',
+        customId: 'forward',
+        disabled
+    });
+}
+
+function getFarForwardButton(disabled: boolean): MessageButton {
+    return new MessageButton({
+        style: 'PRIMARY',
+        label: '▶▶',
+        customId: 'farforward',
+        disabled
+    });
+}
+
+function getMessageActionRow(currentIndex: number, nominations: ExpandedNomination[], pageMax: number): MessageActionRow {
+    const backButton = getBackButton(currentIndex === 0);
+    const farBackButton = getFarBackButton(currentIndex === 0);
+    const forwardButton = getForwardButton(currentIndex + pageMax >= nominations.length);
+    const farForwardButton = getFarForwardButton(currentIndex + pageMax >= nominations.length);
+    return new MessageActionRow({ components: [farBackButton, backButton, forwardButton, farForwardButton] });
 }
 
 async function HandleCurrentNominations({ interaction, args }: RunOptions) {
@@ -47,36 +92,19 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
     const canFitOnOnePage = nominations.length <= MAX_PER_PAGE;
 
     if (canFitOnOnePage) {
-        const embed = new MessageEmbed()
-            .setColor('RANDOM')
-            .setAuthor(`Current Nominations`)
-            .setTitle(`Movie Night Season #${seasonNum}`)
-            .setDescription(nominations.map((n, idx) =>
-                `${idx + 1}. <@${n.user.discord_id}>: [${n.movie.title} (${n.movie.year})](https://www.imdb.com/title/${n.movie.imdbID}) - **${n.category}**`)
-                .join("\n"))
-            .setTimestamp(new Date());
+        const embed = GenerateEmbed(seasonNum, nominations, 0, MAX_PER_PAGE);
         interaction.followUp({ embeds: [embed], ephemeral: false });
     } else {
-        const backId = 'back'
-        const forwardId = 'forward'
-        const backButton = new MessageButton({
-            style: 'SECONDARY',
-            label: 'Back',
-            emoji: '⬅️',
-            customId: backId
-        })
-        const forwardButton = new MessageButton({
-            style: 'SECONDARY',
-            label: 'Forward',
-            emoji: '➡️',
-            customId: forwardId
-        })
         const embed = GenerateEmbed(seasonNum, nominations, 0, MAX_PER_PAGE);
         const message = await interaction.followUp({
             embeds: [embed],
-            components: canFitOnOnePage
-                ? []
-                : [new MessageActionRow({ components: [forwardButton] })],
+            components: [new MessageActionRow({
+                components: [
+                    getFarBackButton(true),
+                    getBackButton(true),
+                    getForwardButton(false),
+                    getFarForwardButton(false)]
+            })],
             ephemeral: true
         }) as Message;
 
@@ -85,19 +113,27 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
         let currentIndex = 0
         collector.on('collect', async (interaction: ButtonInteraction) => {
             // Increase/decrease index
-            interaction.customId === backId ? (currentIndex -= MAX_PER_PAGE) : (currentIndex += MAX_PER_PAGE)
+            switch (interaction.customId) {
+                case 'farback':
+                    currentIndex = 0;
+                    break;
+                case 'back':
+                    currentIndex -= MAX_PER_PAGE;
+                    break;
+                case 'forward':
+                    currentIndex += MAX_PER_PAGE;
+                    break;
+                case 'farforward':
+                    const remainder = nominations.length % MAX_PER_PAGE;
+                    currentIndex = remainder ? nominations.length - remainder : nominations.length - MAX_PER_PAGE;
+                    break;
+            }
+
             // Respond to interaction by updating message with new embed
             await interaction.update({
                 embeds: [GenerateEmbed(seasonNum, nominations, currentIndex, MAX_PER_PAGE)],
                 components: [
-                    new MessageActionRow({
-                        components: [
-                            // back button if it isn't the start
-                            ...(currentIndex ? [backButton] : []),
-                            // forward button if it isn't the end
-                            ...(currentIndex + MAX_PER_PAGE < nominations.length ? [forwardButton] : [])
-                        ]
-                    })
+                    getMessageActionRow(currentIndex, nominations, MAX_PER_PAGE),
                 ]
             })
         });
