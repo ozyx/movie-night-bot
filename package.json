@@ -12,8 +12,10 @@
     "start:dev": "ts-node-dev src/bot.ts",
     "start:prod": "node dist/bot.js",
     "postinstall": "npm run build",
+    "prebuild": "npm run lint",
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "lint": "eslint . --ext .ts"
   },
   "author": "Jesse Mazzella",
   "license": "MIT",
@@ -30,6 +32,9 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/node": "^16.11.11",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "eslint": "^8.6.0",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.2"

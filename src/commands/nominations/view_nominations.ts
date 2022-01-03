@@ -112,6 +112,7 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
 
         let currentIndex = 0
         collector.on('collect', async (interaction: ButtonInteraction) => {
+            const remainder = nominations.length % MAX_PER_PAGE;
             // Increase/decrease index
             switch (interaction.customId) {
                 case 'farback':
@@ -124,7 +125,6 @@ async function HandleCurrentNominations({ interaction, args }: RunOptions) {
                     currentIndex += MAX_PER_PAGE;
                     break;
                 case 'farforward':
-                    const remainder = nominations.length % MAX_PER_PAGE;
                     currentIndex = remainder ? nominations.length - remainder : nominations.length - MAX_PER_PAGE;
                     break;
             }

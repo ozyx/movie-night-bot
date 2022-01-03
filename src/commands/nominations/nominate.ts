@@ -6,11 +6,11 @@ import { MessageEmbed } from "discord.js";
 import { SeasonController } from "../../controller/SeasonController";
 import { RunOptions } from "../../typings/Command";
 
-function isValidImdbId(imdbId) {
+function isValidImdbId(imdbId: string) {
     return /^.*(tt\d{7}|\d{8}).*$/.test(imdbId);
 }
 
-function extractImdbId(url) {
+function extractImdbId(url: string) {
     return /^.*(tt\d{7}|\d{8}).*$/.exec(url)[1];
 }
 
@@ -72,7 +72,7 @@ async function HandleNominate({ interaction, args }: RunOptions) {
                 .setTimestamp()
         ]
     });
-};
+}
 
 export default new Command({
     name: "nominate",
