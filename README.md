@@ -10,6 +10,7 @@
 
 - [ ] Command to select the movies to be voted on
 - [ ] Command to mark the selected movies as watched
+- [X] Command to set the announcement channel
 
 ### User commands
 

@@ -11,7 +11,7 @@ interface UserInput {
 
 type UserDocument = UserInput & mongoose.Document;
 
-const UserType: Record<keyof IUser, any> = {
+const UserType: Record<keyof IUser, unknown> = {
   discord_id: {
     type: String,
     required: true,

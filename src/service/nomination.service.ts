@@ -36,7 +36,7 @@ export async function hasNominatedMovie(userId: string, season_num: number, movi
 }
 
 export async function getNominations(seasonNum: number, userId?: string): Promise<ExpandedNomination[]> {
-    const agg: any[] = [
+    const agg: unknown[] = [
         {
             '$lookup': {
                 'from': 'movies',

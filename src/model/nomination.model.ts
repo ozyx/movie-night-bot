@@ -13,7 +13,7 @@ interface NominationInput {
 
 type NominationDocument = NominationInput & mongoose.Document;
 
-const NominationType: Record<keyof INomination, any> =
+const NominationType: Record<keyof INomination, unknown> =
 {
   movie: {
     type: Schema.Types.ObjectId,

@@ -4,12 +4,12 @@ import { ISeason } from "../typings/Season";
 interface SeasonInput {
   season_num: ISeason["season_num"];
   end_date?: ISeason["end_date"];
-  start_date?: ISeason["start_date"];
+  start_date: ISeason["start_date"];
 }
 
 type SeasonDocument = SeasonInput & mongoose.Document;
 
-const SeasonType: Record<keyof ISeason, any> = {
+const SeasonType: Record<keyof ISeason, unknown> = {
   season_num: {
     type: Number,
     required: true,
