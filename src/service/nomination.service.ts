@@ -1,6 +1,7 @@
 import { NominationDocument } from '../model/nomination.model';
 import { MongoClient } from '../structures/MongoClient';
 import { ExpandedNomination } from '../typings/Nomination';
+
 const Nomination = MongoClient.getConnection().models.Nomination;
 
 export async function getNominationCount(userId: string, season_num: number): Promise<number> {
@@ -36,7 +37,7 @@ export async function hasNominatedMovie(userId: string, season_num: number, movi
 }
 
 export async function getNominations(seasonNum: number, userId?: string): Promise<ExpandedNomination[]> {
-    const agg: unknown[] = [
+    const agg: any[] = [
         {
             '$lookup': {
                 'from': 'movies',
