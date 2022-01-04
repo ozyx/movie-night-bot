@@ -4,6 +4,12 @@ import { RunOptions } from "../../typings/Command";
 
 async function HandleSetAnnouncementChannel({ interaction, args }: RunOptions) {
     const guildID = interaction.guildId;
+    const channel = args.getChannel("channel");
+
+    if (channel.type !== "GUILD_TEXT") {
+        return interaction.followUp("That channel is not a text channel. Please choose a text channel.");
+    }
+
     const channelID = args.getChannel("channel").id;
 
     try {
@@ -11,6 +17,7 @@ async function HandleSetAnnouncementChannel({ interaction, args }: RunOptions) {
     } catch (err) {
         return interaction.followUp(err.message);
     }
+
     interaction.followUp(`Announcement channel set to <#${channelID}>`);
 }
 
