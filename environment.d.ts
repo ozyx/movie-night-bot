@@ -9,6 +9,7 @@ declare global {
             MONGO_OPTIONS: string;
             ACTIVITY_TYPE: "PLAYING" | "STREAMING" | "LISTENING" | "WATCHING";
             ACTIVITY_CONTENT: string;
+            ADMIN_ROLE: string;
         }
     }
 }
